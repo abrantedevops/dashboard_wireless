@@ -1,6 +1,6 @@
 #!/bin/bash
 ###################################################################
-# Script de Monitoramento para Verificação do Proxmox
+# Dashboard created for my wireless devices
 ###################################################################
 
 ###################################################################
@@ -8,9 +8,8 @@
 ###################################################################
 
 # IP do Proxmox
-server='192.168.0.2'
-# Portas a serem verificadas
-ports='22'
+server='127.0.0.1'
+ports='21 22 23 25 53 80 110 443 3306 8006'
 # Hostname
 hostname=$(hostname)
 # Kernel
@@ -41,7 +40,7 @@ link_quality=$(link_quality)
 title="Proxmox Monitoramento"
 version="v1.0.0"
 uptime_figlet=$(uptime | awk '{print $3,$4,$5}' | sed 's/,/ and/' | sed 's/,//' | figlet -f big)
-# battery_BAT0=$(cat /sys/class/power_supply/BAT0/capacity)
+battery_BAT0=$(cat /sys/class/power_supply/BAT0/capacity)
 
 
 ###################################################################
@@ -179,6 +178,31 @@ header_html() {
                 justify-content: center;
             }
 
+
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid #ffffff;
+                background-color: #1e1e1e;
+                text-align: center;
+            }
+            th, td {
+                padding: 5px;
+                border-bottom: 1px solid #ddd;
+            }
+            th {
+                background-color: #1e1e1e;
+            }
+
+            footer {
+                text-align: center;
+                font-family: 'SFPixelate';
+                color: #9d3be1;
+                font-size: 66%;
+                margin-top: 2%;
+            }
+
+
         </style>
     </head>
     <body>
@@ -196,7 +220,7 @@ header_html() {
                 <p class='teto' style='text-align:center;'>Última atualização: <blink>$(date | sed 's/-03//')</blink></p>
             </div>
         </div>
-        <hr>
+        <hr color='cyan'>
         <marquee>
             <i style='color: #9d3be1;'>Dashboard created for my wireless devices</i>
         </marquee>
@@ -212,7 +236,7 @@ header_html() {
         </div>
         <div class="flex-container">
             <div class="band-1">
-                <h2 style='color: #9d9be1;text-align: center;'>Informações do Sistema <i class='fas fa-bookmark'></i></h2>
+                <h2 style='color: #79ffa0;text-align: center;'>Informações do Sistema <i class='fas fa-bookmark'></i></h2>
 "
 }
 
@@ -220,6 +244,10 @@ header_html() {
 footer_html() {
     echo "
     </div>
+    <hr color='cyan'>
+    <footer>
+        <p>© 2024 - by Abrantedevops</p>
+    </footer>
     </body>
     </html>
 "
@@ -230,7 +258,7 @@ battery_chart() {
     echo "
     <script>
     var options = {
-        series: [40],
+        series: [$battery_BAT0],
         labels: ['Bateria'],
         colors: ['#79ffa0'],
         chart: {
@@ -280,7 +308,7 @@ battery_chart() {
 }
 
 
-# Informações do Sistema
+# Informações do Sistema e Usuários Conectados
 card_1_body() {
     echo "
     <b><i class='fa-brands fa-linux'></i> Distribuição Linux:</b><span style='margin-left:10%;'> $(lsb_release -d | awk '{print $2,$3,$4,$5,$6,$7,$8,$9}') - $(lsb_release -c | awk '{print $2}')</span><br>
@@ -302,13 +330,26 @@ card_1_body() {
     </div>"
 }
 
+
+# Usuários Conectados
+ users_info() {
+    users_online=$(who | wc -l)
+    echo "<h2 style='color: #79ffa0; text-align: center;'>Usuários Conectados <i class='fas fa-users'></i></h2>"
+    if [ $users_online -eq 1 ]; then
+        echo "<p><b>Total:</b> $users_online</p>"
+        echo "<pre>$(who -H)</pre>"
+    else
+        echo "<p>Não há usuários conectados.</p>"
+    fi
+}
+
+
 # Temperatura e Uso de Disco
 card_2_body() {
     echo "<div class='band-2'>"
-    echo "<h2 style='color: #9d9be1;text-align: center;'>Temperatura Média <i class='fas fa-thermometer-half'></i></h2>"
+    echo "<h2 style='color: #79ffa0;text-align: center;'>Temperatura Média <i class='fas fa-thermometer-half'></i></h2>"
     echo "<div id='sensors' style='width: 400px;'></div>"
-    echo "<hr>"
-    echo "<h2 style='color: #9d9be1;text-align: center;'>Disponibilidade de Disco <i class='fas fa-chart-pie'></i></h2>"
+    echo "<h2 style='color: #79ffa0;text-align: center;'>Disponibilidade de Disco <i class='fas fa-chart-pie'></i></h2>"
     echo "<div id='disk-usage' style='width: 400px;'></div>"
     # Fim div band-2
     echo "</div>"
@@ -317,32 +358,20 @@ card_2_body() {
 }
 
 
-ports_check() {
-    echo "<h2 style='color: #9d9be1;text-align: center;'>Verificação de Portas <i class='fas fa-network-wired'></i></h2>"
-    for port in $ports; do
-        if nc -zv $server $port 2>&1 | grep -q 'succeeded'; then
-            echo "<p><b>$port: <span style='background-color:green; color:white;'>Aberta</span></b></p>"
-        else
-            echo "<p><b>$port: <span style='background-color:red; color:white;'>Fechada</span</b></p>"
-        fi
-    done
-    echo "<hr>"
-}
-
 
 # Sensores de Temperatura para CPU, Placa mãe e Armazenamento
-# temperatura_cpu=$(sensors | grep 'Core 0' | awk '{print $3}')
-# temperatura_motherboard=$(sensors | grep 'temp1' | awk '{print $2}')
-# temperatura_armazenamento=$(hddtemp /dev/sda | awk '{print $4}')
 
 
-#ApexCharts - gráfico de temperatura
+#ApexCharts - bar graphic of temperature
 sensors_info_chart() {
     echo "
     <script>
+    temperatura_cpu=$(sensors 2>/dev/null | grep 'Core 0' | awk '{print $3}' | sed 's/+//' | sed 's/°C//')
+    temperatura_motherboard=$(sensors 2>/dev/null | grep 'temp1' | awk 'BEGIN {sum=0; count=0} $2 != "N/A" {sum+=$2; count++} END {if (count > 0) printf "%.0f", sum/count}')
+    temperatura_armazenamento=$(hddtemp /dev/sda | awk '{print $4}' | sed 's/°C//')
     var options = {
         series: [{
-            data: [10, 20, 30]
+            data: [temperatura_cpu, temperatura_motherboard, temperatura_armazenamento]
         }],
         chart: {
             height: 350,
@@ -371,7 +400,7 @@ sensors_info_chart() {
             categories: ['CPU', 'Placa-Mãe', 'Armazenamento'],
             labels: {
                 style: {
-                    colors: '#79ffa0',
+                    colors: '#fff',
                     fontSize: '14px'
                 }
             }
@@ -380,13 +409,13 @@ sensors_info_chart() {
             title: {
                 text: 'Temperatura (°C)',
                 style: {
-                    color: '#79ffa0',
+                    color: '#fff',
                     fontSize: '14px'
                 }
             },
             labels: {
                 style: {
-                    colors: '#79ffa0',
+                    colors: '#fff',
                     fontSize: '14px'
                 }
             }
@@ -407,29 +436,6 @@ sensors_info_chart() {
     chart.render();
     </script>"
 }
-
-# Usuários Conectados
- users_info() {
-    users_online=$(who | wc -l)
-    echo "<h2 style='color: #9d9be1; text-align: center;'>Usuários Conectados <i class='fas fa-users'></i></h2>"
-    if [ $users_online -eq 1 ]; then
-        echo "<p><b>Total:</b> $users_online</p>"
-        echo "<pre>$(who -H)</pre>"
-    else
-        echo "<p>Não há usuários conectados.</p>"
-    fi
-    echo "<hr>"
-}
-
-
-
-# Processos
-process_info() {
-    echo "<h2 style='color: #9d9be1';>Processos <i class='fas fa-tasks'></i></h2>"
-    echo "<p><b>Processos ativos:</b> $(ps -e | wc -l)</p>"
-    echo "<hr>"
-}
-
 
 
 # ApexCharts - donut for Disk Usage
@@ -466,6 +472,80 @@ disk_usage_chart() {
 
 }
 
+getservbyport() {
+    case $1 in
+        21) echo "ftp" ;;
+        22) echo "ssh" ;;
+        23) echo "telnet" ;;
+        25) echo "smtp" ;;
+        53) echo "dns" ;;
+        80) echo "http" ;;
+        110) echo "pop3" ;;
+        443) echo "https" ;;
+        3306) echo "mysql" ;;
+        8006) echo "proxmox" ;;
+        *) echo "Desconhecido" ;;
+    esac
+}
+
+protocolport() {
+    case $1 in
+        21) echo "TCP" ;;
+        22) echo "TCP" ;;
+        23) echo "TCP" ;;
+        25) echo "TCP" ;;
+        53) echo "UDP" ;;
+        80) echo "TCP" ;;
+        110) echo "TCP" ;;
+        443) echo "TCP" ;;
+        3306) echo "TCP" ;;
+        8006) echo "TCP" ;;
+        *) echo "Desconhecido" ;;
+    esac
+}
+
+# Verificação de Portas
+ports_check_code() {
+    echo "<table>"
+    echo "<tr><th>Porta</th><th>Protocolo</th><th>Estado</th><th>Serviço</th></tr>"
+    index=1
+    for port in $ports; do
+        if nc -z -v -w 1 $server $port &>/dev/null; then
+            echo "<tr><td>$port</td><td>$(protocolport $port)</td><td><i class='fas fa-circle' style='color:green;'></i> Aberta</span></td><td>$(getservbyport $port)</td></tr>"
+        else
+            echo "<tr><td>$port</td><td>$(protocolport $port)</td><td><i class='fas fa-circle' style='color:red;'></i> Fechada</span></td><td>$(getservbyport $port)</td></tr>"
+        fi
+        index=$((index+1))
+    done
+    echo "</table>"
+}
+
+ports_check() {
+    echo "<h2 style='color: #79ffa0; text-align: center;'>Verificação de Portas <i class='fas fa-search'></i></h2>"
+    echo "<div class='display-ports'>$(ports_check_code)</div>"
+}
+
+
+# Serviços Status
+services_info() {
+    echo "<h2 style='color: #79ffa0; text-align: center;'>Status dos Serviços <i class='fas fa-list'></i></h2>"
+    echo "<table>"
+    echo "<tr><th>Serviço</th><th>Status</th><th>Descrição</th></tr>"
+    for service in $(systemctl list-units --type=service --no-legend | awk '{print $1}'); do
+        if systemctl is-active $service &>/dev/null; then
+            echo "<tr><td>$service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>$(systemctl show -p Description $service | awk -F'=' '{print $2}')</td></tr>"
+        else
+            echo "<tr><td>$service</td><td><span style='background-color:red; color:white; padding: 3px;'> Parado</span></td><td>$(systemctl show -p Description $service | awk -F'=' '{print $2}')</td></tr>"
+        fi
+    done
+    echo "</table>"
+} 
+
+
+#Adicionando o script no Crontab
+# crontab(){
+#     echo -e "*/1 *\t* * *\troot\t$(pwd)/check.sh > $(pwd)/html/index.html" >> /etc/crontab
+# }
 
 
 
@@ -476,15 +556,15 @@ disk_usage_chart() {
 
 header_html
 
-card_1_body
-card_2_body
-
 battery_chart
 
+card_1_body
+card_2_body
 sensors_info_chart
-
-process_info
-
 disk_usage_chart
+
+
+ports_check
+services_info
 
 footer_html

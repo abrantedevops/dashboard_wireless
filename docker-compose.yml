@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  apache:
+    container_name: monitor-wireless
+    build: .docker
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - ./html:/var/www/html/check/index.html
+      - ./html:/var/www/html/check/fontes
