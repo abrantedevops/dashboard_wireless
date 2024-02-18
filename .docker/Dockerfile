@@ -8,6 +8,8 @@ RUN mkdir -p /var/www/html/check
 
 COPY apache2.conf /etc/apache2/
 
+COPY security.conf /etc/apache2/conf-available/
+
 RUN chown -R www-data:www-data /var/www/html/check
 
 EXPOSE 80

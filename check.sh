@@ -7,7 +7,6 @@
 # Configuração
 ###################################################################
 
-# IP do Proxmox
 server='127.0.0.1'
 ports='21 22 23 25 53 80 110 443 3306 8006'
 # Hostname
@@ -38,7 +37,7 @@ link_quality=$(link_quality)
 
 # Não alterar
 title="Proxmox Monitoramento"
-version="v1.0.0"
+version="v1.0"
 uptime_figlet=$(uptime | awk '{print $3,$4,$5}' | sed 's/,/ and/' | sed 's/,//' | figlet -f big)
 battery_BAT0=$(cat /sys/class/power_supply/BAT0/capacity)
 
@@ -67,7 +66,7 @@ header_html() {
 
             @font-face {
             font-family: "SFPixelate";
-            src: url("/fontes/SFPixelate-Bold.ttf") format("truetype");
+            src: url("/check/fontes/SFPixelate-Bold.ttf") format("truetype");
             }
 
             /* This will work on Firefox */
@@ -159,6 +158,7 @@ header_html() {
                 flex: 1; /* Para assegurar que cada div vai ocupar o mesmo espaço */
                 display: flex;
                 flex-direction: column;
+                text-align: center;
 
             }
 
@@ -175,7 +175,11 @@ header_html() {
 
             .band-2 {
                 align-items: center;
-                justify-content: center;
+                
+            }
+
+            #battery p{
+                color: #9d3be1;
             }
 
 
@@ -257,8 +261,11 @@ footer_html() {
 battery_chart() {
     echo "
     <script>
+    if (!isNaN($battery_BAT0)) {
+   
+    var seriesData = [$battery_BAT0];
     var options = {
-        series: [$battery_BAT0],
+        series: [seriesData],
         labels: ['Bateria'],
         colors: ['#79ffa0'],
         chart: {
@@ -301,6 +308,11 @@ battery_chart() {
             }
         },
     };
+    } else {
+        document.getElementById('battery').innerHTML = '<p>Não Disponível</p>';
+    }
+
+    
 
     var chart = new ApexCharts(document.querySelector('#battery'), options);
     chart.render();
@@ -348,9 +360,9 @@ card_1_body() {
 card_2_body() {
     echo "<div class='band-2'>"
     echo "<h2 style='color: #79ffa0;text-align: center;'>Temperatura Média <i class='fas fa-thermometer-half'></i></h2>"
-    echo "<div id='sensors' style='width: 400px;'></div>"
+    echo "<div id='sensors' style='width: 400px; text-align: center;color: #9d3be1;'></div>"
     echo "<h2 style='color: #79ffa0;text-align: center;'>Disponibilidade de Disco <i class='fas fa-chart-pie'></i></h2>"
-    echo "<div id='disk-usage' style='width: 400px;'></div>"
+    echo "<div id='disk-usage' style='width: 400px; text-align: center;'></div>"
     # Fim div band-2
     echo "</div>"
     # Fim div flex-container
@@ -361,19 +373,22 @@ card_2_body() {
 
 # Sensores de Temperatura para CPU, Placa mãe e Armazenamento
 
+temperatura_cpu=$(sensors 2>/dev/null | grep 'Core 0' | awk '{print $3}' | sed 's/+//' | sed 's/°C//')
+temperatura_motherboard=$(sensors 2>/dev/null | grep 'temp1' | awk 'BEGIN {sum=0; count=0} $2 != "N/A" {sum+=$2; count++} END {if (count > 0) printf "%.0f", sum/count}')
+temperatura_armazenamento=$(hddtemp /dev/sda | awk '{print $4}' | sed 's/°C//')
 
 #ApexCharts - bar graphic of temperature
 sensors_info_chart() {
     echo "
     <script>
-    temperatura_cpu=$(sensors 2>/dev/null | grep 'Core 0' | awk '{print $3}' | sed 's/+//' | sed 's/°C//')
-    temperatura_motherboard=$(sensors 2>/dev/null | grep 'temp1' | awk 'BEGIN {sum=0; count=0} $2 != "N/A" {sum+=$2; count++} END {if (count > 0) printf "%.0f", sum/count}')
-    temperatura_armazenamento=$(hddtemp /dev/sda | awk '{print $4}' | sed 's/°C//')
-    var options = {
-        series: [{
-            data: [temperatura_cpu, temperatura_motherboard, temperatura_armazenamento]
-        }],
-        chart: {
+    if (!isNaN($temperatura_cpu) && !isNaN($temperatura_motherboard) && !isNaN($temperatura_armazenamento)) {
+        var seriesData = [$temperatura_cpu, $temperatura_motherboard, $temperatura_armazenamento];
+        var options = {
+            series: [{
+                name: 'Temperatura',
+                data: seriesData
+            }],
+            chart: {
             height: 350,
             type: 'bar',
             events: {
@@ -416,7 +431,7 @@ sensors_info_chart() {
             labels: {
                 style: {
                     colors: '#fff',
-                    fontSize: '14px'
+                    fontSize: '14px',
                 }
             }
         },
@@ -432,6 +447,10 @@ sensors_info_chart() {
         }
     };
 
+    } else {
+        document.getElementById('sensors').innerHTML = '<p>Não Disponível</p>';
+    }
+        
     var chart = new ApexCharts(document.querySelector('#sensors'), options);
     chart.render();
     </script>"
@@ -531,7 +550,7 @@ services_info() {
     echo "<h2 style='color: #79ffa0; text-align: center;'>Status dos Serviços <i class='fas fa-list'></i></h2>"
     echo "<table>"
     echo "<tr><th>Serviço</th><th>Status</th><th>Descrição</th></tr>"
-    for service in $(systemctl list-units --type=service --no-legend | awk '{print $1}'); do
+    for service in $(systemctl list-units --type=service --no-legend | awk '{print $1}' | sed 's/\.service//'); do
         if systemctl is-active $service &>/dev/null; then
             echo "<tr><td>$service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>$(systemctl show -p Description $service | awk -F'=' '{print $2}')</td></tr>"
         else
@@ -540,12 +559,6 @@ services_info() {
     done
     echo "</table>"
 } 
-
-
-#Adicionando o script no Crontab
-# crontab(){
-#     echo -e "*/1 *\t* * *\troot\t$(pwd)/check.sh > $(pwd)/html/index.html" >> /etc/crontab
-# }
 
 
 

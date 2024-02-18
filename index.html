@@ -16,7 +16,7 @@
 
             @font-face {
             font-family: SFPixelate;
-            src: url(/fontes/SFPixelate-Bold.ttf) format(truetype);
+            src: url(/check/fontes/SFPixelate-Bold.ttf) format(truetype);
             }
 
             /* This will work on Firefox */
@@ -108,6 +108,7 @@
                 flex: 1; /* Para assegurar que cada div vai ocupar o mesmo espaço */
                 display: flex;
                 flex-direction: column;
+                text-align: center;
 
             }
 
@@ -124,7 +125,11 @@
 
             .band-2 {
                 align-items: center;
-                justify-content: center;
+                
+            }
+
+            #battery p{
+                color: #9d3be1;
             }
 
 
@@ -160,13 +165,13 @@
             <div class=info-basic-top>
                 <p><b>Hostname:</b> UbMaster</p>
                 <p><b>Kernel:</b> 5.15.0-94-generic</p>
-                <p><b>Pacotes:</b> 2431</p>
+                <p><b>Pacotes:</b> 2433</p>
                 <p><b>ESSID:</b> Não conectado</p>
                 <p><b>Link Quality:</b> Não Disponível</p>
             </div>
             <div class=title-top>
-                <h1 style='text-align:center;'>Proxmox Monitoramento - v1.0.0</h1>
-                <p class='teto' style='text-align:center;'>Última atualização: <blink>sáb 17 fev 2024 00:14:47 </blink></p>
+                <h1 style='text-align:center;'>Proxmox Monitoramento - v1.0</h1>
+                <p class='teto' style='text-align:center;'>Última atualização: <blink>dom 18 fev 2024 19:33:56 </blink></p>
             </div>
         </div>
         <hr color='cyan'>
@@ -176,14 +181,14 @@
         <div class=flex-container>
             <div class=uptime-top>
                 <span>System Uptime:</span>
-                <pre> ___   ___     ___  __                   _   __                       
-|__ \ / _ \ _ / _ \/_ |                 | | /_ |                      
-   ) | | | (_) | | || |   __ _ _ __   __| |  | |  _   _ ___  ___ _ __ 
-  / /| | | | | | | || |  / _` | '_ \ / _` |  | | | | | / __|/ _ \ '__|
- / /_| |_| |_| |_| || | | (_| | | | | (_| |  | | | |_| \__ \  __/ |   
-|____|\___/(_)\___/ |_|  \__,_|_| |_|\__,_|  |_|  \__,_|___/\___|_|   
-                                                                      
-                                                                      </pre>
+                <pre> __       _                               _   __  ___    _____ ___  
+/_ |     | |                             | | /_ |/ _ \ _| ____|__ \ 
+ | |   __| | __ _ _   _    __ _ _ __   __| |  | | | | (_) |__    ) |
+ | |  / _` |/ _` | | | |  / _` | '_ \ / _` |  | | | | | |___ \  / / 
+ | | | (_| | (_| | |_| | | (_| | | | | (_| |  | | |_| |_ ___) |/ /_ 
+ |_|  \__,_|\__,_|\__, |  \__,_|_| |_|\__,_|  |_|\___/(_)____/|____|
+                   __/ |                                            
+                  |___/                                             </pre>
             </div>
             <div class=battery-top>
                 <span>Battery:</span>
@@ -196,8 +201,11 @@
 
 
     <script>
+    if (!isNaN()) {
+   
+    var seriesData = [];
     var options = {
-        series: [40],
+        series: [seriesData],
         labels: ['Bateria'],
         colors: ['#79ffa0'],
         chart: {
@@ -240,6 +248,11 @@
             }
         },
     };
+    } else {
+        document.getElementById('battery').innerHTML = '<p>Não Disponível</p>';
+    }
+
+    
 
     var chart = new ApexCharts(document.querySelector('#battery'), options);
     chart.render();
@@ -269,18 +282,21 @@ abrantedevops :0           2024-02-14 19:39 (:0)</pre>
     </div>
 <div class='band-2'>
 <h2 style='color: #79ffa0;text-align: center;'>Temperatura Média <i class='fas fa-thermometer-half'></i></h2>
-<div id='sensors' style='width: 400px;'></div>
+<div id='sensors' style='width: 400px; text-align: center;color: #9d3be1;'></div>
 <h2 style='color: #79ffa0;text-align: center;'>Disponibilidade de Disco <i class='fas fa-chart-pie'></i></h2>
-<div id='disk-usage' style='width: 400px;'></div>
+<div id='disk-usage' style='width: 400px; text-align: center;'></div>
 </div>
 </div>
 
     <script>
-    var options = {
-        series: [{
-            data: [10, 44, 30]
-        }],
-        chart: {
+    if (!isNaN() && !isNaN() && !isNaN()) {
+        var seriesData = [, , ];
+        var options = {
+            series: [{
+                name: 'Temperatura',
+                data: seriesData
+            }],
+            chart: {
             height: 350,
             type: 'bar',
             events: {
@@ -323,7 +339,7 @@ abrantedevops :0           2024-02-14 19:39 (:0)</pre>
             labels: {
                 style: {
                     colors: '#fff',
-                    fontSize: '14px'
+                    fontSize: '14px',
                 }
             }
         },
@@ -339,14 +355,18 @@ abrantedevops :0           2024-02-14 19:39 (:0)</pre>
         }
     };
 
+    } else {
+        document.getElementById('sensors').innerHTML = '<p>Não Disponível</p>';
+    }
+        
     var chart = new ApexCharts(document.querySelector('#sensors'), options);
     chart.render();
     </script>
 
     <script>
     value_total_disk = 247
-    value_used_disk = 196
-    value_free_disk = 41
+    value_used_disk = 204
+    value_free_disk = 33
     var options = {
         series: [value_used_disk, value_free_disk],
         chart: {
@@ -388,89 +408,89 @@ abrantedevops :0           2024-02-14 19:39 (:0)</pre>
 <h2 style='color: #79ffa0; text-align: center;'>Status dos Serviços <i class='fas fa-list'></i></h2>
 <table>
 <tr><th>Serviço</th><th>Status</th><th>Descrição</th></tr>
-<tr><td>accounts-daemon.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Accounts Service</td></tr>
-<tr><td>acpid.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>ACPI event daemon</td></tr>
-<tr><td>alsa-restore.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Save/Restore Sound Card State</td></tr>
-<tr><td>apparmor.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Load AppArmor profiles</td></tr>
-<tr><td>apport.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>LSB: automatic crash report generation</td></tr>
-<tr><td>avahi-daemon.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Avahi mDNS/DNS-SD Stack</td></tr>
-<tr><td>binfmt-support.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Enable support for additional executable binary formats</td></tr>
-<tr><td>blk-availability.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Availability of block devices</td></tr>
-<tr><td>colord.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Manage, Install and Generate Color Profiles</td></tr>
-<tr><td>console-setup.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Set console font and keymap</td></tr>
-<tr><td>containerd.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>containerd container runtime</td></tr>
-<tr><td>cron.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Regular background program processing daemon</td></tr>
-<tr><td>cups-browsed.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Make remote CUPS printers available locally</td></tr>
-<tr><td>cups.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>CUPS Scheduler</td></tr>
-<tr><td>dbus.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>D-Bus System Message Bus</td></tr>
-<tr><td>docker.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Docker Application Container Engine</td></tr>
-<tr><td>finalrd.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Create final runtime dir for shutdown pivot root</td></tr>
-<tr><td>fwupd.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Firmware update daemon</td></tr>
-<tr><td>gdm.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>GNOME Display Manager</td></tr>
-<tr><td>inetd.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Internet superserver</td></tr>
-<tr><td>irqbalance.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>irqbalance daemon</td></tr>
-<tr><td>kerneloops.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Tool to automatically collect and submit kernel crash signatures</td></tr>
-<tr><td>keyboard-setup.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Set the console keyboard layout</td></tr>
-<tr><td>kmod-static-nodes.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Create list of static device nodes for the current kernel</td></tr>
-<tr><td>libvirt-guests.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Suspend/Resume Running libvirt Guests</td></tr>
-<tr><td>libvirtd.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Virtualization daemon</td></tr>
-<tr><td>lm-sensors.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Initialize hardware monitoring sensors</td></tr>
-<tr><td>lvm2-monitor.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling</td></tr>
-<tr><td>ModemManager.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Modem Manager</td></tr>
-<tr><td>mosquitto.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Mosquitto MQTT v3.1/v3.1.1 Broker</td></tr>
-<tr><td>networkd-dispatcher.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Dispatcher daemon for systemd-networkd</td></tr>
-<tr><td>NetworkManager-wait-online.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Network Manager Wait Online</td></tr>
-<tr><td>NetworkManager.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Network Manager</td></tr>
-<tr><td>nfs-kernel-server.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>LSB: Kernel NFS server support</td></tr>
-<tr><td>openvpn.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>OpenVPN service</td></tr>
-<tr><td>polkit.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Authorization Manager</td></tr>
-<tr><td>postgresql.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>PostgreSQL RDBMS</td></tr>
-<tr><td>postgresql@12-main.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>PostgreSQL Cluster 12-main</td></tr>
-<tr><td>qemu-kvm.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>QEMU KVM preparation - module, ksm, hugepages</td></tr>
-<tr><td>rpcbind.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>RPC bind portmap service</td></tr>
-<tr><td>rsyslog.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>System Logging Service</td></tr>
-<tr><td>rtkit-daemon.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>RealtimeKit Scheduling Policy Service</td></tr>
-<tr><td>setvtrgb.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Set console scheme</td></tr>
-<tr><td>snapd.apparmor.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Load AppArmor profiles managed internally by snapd</td></tr>
-<tr><td>snapd.seeded.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Wait until snapd is fully seeded</td></tr>
-<tr><td>snapd.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Snap Daemon</td></tr>
-<tr><td>ssh.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>OpenBSD Secure Shell server</td></tr>
-<tr><td>switcheroo-control.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Switcheroo Control Proxy service</td></tr>
-<tr><td>sysstat.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Resets System Activity Data Collector</td></tr>
-<tr><td>systemd-fsck@dev-disk-by\x2duuid-9BD5\x2dF533.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>File System Check on /dev/disk/by-uuid/9BD5-F533</td></tr>
-<tr><td>systemd-journal-flush.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Flush Journal to Persistent Storage</td></tr>
-<tr><td>systemd-journald.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Journal Service</td></tr>
-<tr><td>systemd-logind.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Login Service</td></tr>
-<tr><td>systemd-machined.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Virtual Machine and Container Registration Service</td></tr>
-<tr><td>systemd-modules-load.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Load Kernel Modules</td></tr>
-<tr><td>systemd-random-seed.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Load/Save Random Seed</td></tr>
-<tr><td>systemd-remount-fs.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Remount Root and Kernel File Systems</td></tr>
-<tr><td>systemd-resolved.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Network Name Resolution</td></tr>
-<tr><td>systemd-sysctl.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Apply Kernel Variables</td></tr>
-<tr><td>systemd-sysusers.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Create System Users</td></tr>
-<tr><td>systemd-timesyncd.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Network Time Synchronization</td></tr>
-<tr><td>systemd-tmpfiles-setup-dev.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Create Static Device Nodes in /dev</td></tr>
-<tr><td>systemd-tmpfiles-setup.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Create Volatile Files and Directories</td></tr>
-<tr><td>systemd-udev-trigger.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>udev Coldplug all Devices</td></tr>
-<tr><td>systemd-udevd.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>udev Kernel Device Manager</td></tr>
-<tr><td>systemd-update-utmp.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Update UTMP about System Boot/Shutdown</td></tr>
-<tr><td>systemd-user-sessions.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Permit User Sessions</td></tr>
-<tr><td>udisks2.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Disk Manager</td></tr>
-<tr><td>ufw.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Uncomplicated firewall</td></tr>
-<tr><td>unattended-upgrades.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Unattended Upgrades Shutdown</td></tr>
-<tr><td>upower.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Daemon for power management</td></tr>
-<tr><td>user-runtime-dir@1000.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>User Runtime Directory /run/user/1000</td></tr>
-<tr><td>user@1000.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>User Manager for UID 1000</td></tr>
-<tr><td>vagrant-vmware-utility.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Vagrant VMware Utility</td></tr>
-<tr><td>vboxadd-service.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>vboxadd-service.service</td></tr>
-<tr><td>vboxadd.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>vboxadd.service</td></tr>
-<tr><td>virtualbox.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>LSB: VirtualBox Linux kernel module</td></tr>
-<tr><td>vmware-USBArbitrator.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>LSB: This services starts and stops the USB Arbitrator.</td></tr>
-<tr><td>vmware.service</td><td><span style='background-color:red; color:white; padding: 3px;'> Parado</span></td><td>LSB: This service starts and stops VMware services</td></tr>
-<tr><td>whoopsie.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>crash report submission daemon</td></tr>
-<tr><td>wpa_supplicant.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>WPA supplicant</td></tr>
-<tr><td>xrdp-sesman.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>xrdp session manager</td></tr>
-<tr><td>xrdp.service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>xrdp daemon</td></tr>
+<tr><td>accounts-daemon</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Accounts Service</td></tr>
+<tr><td>acpid</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>ACPI event daemon</td></tr>
+<tr><td>alsa-restore</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Save/Restore Sound Card State</td></tr>
+<tr><td>apparmor</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Load AppArmor profiles</td></tr>
+<tr><td>apport</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>LSB: automatic crash report generation</td></tr>
+<tr><td>avahi-daemon</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Avahi mDNS/DNS-SD Stack</td></tr>
+<tr><td>binfmt-support</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Enable support for additional executable binary formats</td></tr>
+<tr><td>blk-availability</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Availability of block devices</td></tr>
+<tr><td>colord</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Manage, Install and Generate Color Profiles</td></tr>
+<tr><td>console-setup</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Set console font and keymap</td></tr>
+<tr><td>containerd</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>containerd container runtime</td></tr>
+<tr><td>cron</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Regular background program processing daemon</td></tr>
+<tr><td>cups-browsed</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Make remote CUPS printers available locally</td></tr>
+<tr><td>cups</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>CUPS Scheduler</td></tr>
+<tr><td>dbus</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>D-Bus System Message Bus</td></tr>
+<tr><td>docker</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Docker Application Container Engine</td></tr>
+<tr><td>finalrd</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Create final runtime dir for shutdown pivot root</td></tr>
+<tr><td>gdm</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>GNOME Display Manager</td></tr>
+<tr><td>inetd</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Internet superserver</td></tr>
+<tr><td>irqbalance</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>irqbalance daemon</td></tr>
+<tr><td>kerneloops</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Tool to automatically collect and submit kernel crash signatures</td></tr>
+<tr><td>keyboard-setup</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Set the console keyboard layout</td></tr>
+<tr><td>kmod-static-nodes</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Create list of static device nodes for the current kernel</td></tr>
+<tr><td>libvirt-guests</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Suspend/Resume Running libvirt Guests</td></tr>
+<tr><td>libvirtd</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Virtualization daemon</td></tr>
+<tr><td>lm-sensors</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Initialize hardware monitoring sensors</td></tr>
+<tr><td>lvm2-monitor</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling</td></tr>
+<tr><td>ModemManager</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Modem Manager</td></tr>
+<tr><td>mosquitto</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Mosquitto MQTT v3.1/v3.1.1 Broker</td></tr>
+<tr><td>networkd-dispatcher</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Dispatcher daemon for systemd-networkd</td></tr>
+<tr><td>NetworkManager-wait-online</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Network Manager Wait Online</td></tr>
+<tr><td>NetworkManager</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Network Manager</td></tr>
+<tr><td>nfs-kernel-server</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>LSB: Kernel NFS server support</td></tr>
+<tr><td>openvpn</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>OpenVPN service</td></tr>
+<tr><td>polkit</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Authorization Manager</td></tr>
+<tr><td>postgresql</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>PostgreSQL RDBMS</td></tr>
+<tr><td>postgresql@12-main</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>PostgreSQL Cluster 12-main</td></tr>
+<tr><td>qemu-kvm</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>QEMU KVM preparation - module, ksm, hugepages</td></tr>
+<tr><td>rpcbind</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>RPC bind portmap service</td></tr>
+<tr><td>rsyslog</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>System Logging Service</td></tr>
+<tr><td>rtkit-daemon</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>RealtimeKit Scheduling Policy Service</td></tr>
+<tr><td>setvtrgb</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Set console scheme</td></tr>
+<tr><td>snapd.apparmor</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Load AppArmor profiles managed internally by snapd</td></tr>
+<tr><td>snapd.seeded</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Wait until snapd is fully seeded</td></tr>
+<tr><td>snapd</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Snap Daemon</td></tr>
+<tr><td>ssh</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>OpenBSD Secure Shell server</td></tr>
+<tr><td>switcheroo-control</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Switcheroo Control Proxy service</td></tr>
+<tr><td>sysstat</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Resets System Activity Data Collector</td></tr>
+<tr><td>systemd-fsck@dev-disk-by\x2duuid-9BD5\x2dF533</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>File System Check on /dev/disk/by-uuid/9BD5-F533</td></tr>
+<tr><td>systemd-journal-flush</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Flush Journal to Persistent Storage</td></tr>
+<tr><td>systemd-journald</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Journal Service</td></tr>
+<tr><td>systemd-logind</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Login Service</td></tr>
+<tr><td>systemd-machined</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Virtual Machine and Container Registration Service</td></tr>
+<tr><td>systemd-modules-load</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Load Kernel Modules</td></tr>
+<tr><td>systemd-random-seed</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Load/Save Random Seed</td></tr>
+<tr><td>systemd-remount-fs</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Remount Root and Kernel File Systems</td></tr>
+<tr><td>systemd-resolved</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Network Name Resolution</td></tr>
+<tr><td>systemd-sysctl</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Apply Kernel Variables</td></tr>
+<tr><td>systemd-sysusers</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Create System Users</td></tr>
+<tr><td>systemd-timesyncd</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Network Time Synchronization</td></tr>
+<tr><td>systemd-tmpfiles-setup-dev</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Create Static Device Nodes in /dev</td></tr>
+<tr><td>systemd-tmpfiles-setup</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Create Volatile Files and Directories</td></tr>
+<tr><td>systemd-udev-trigger</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>udev Coldplug all Devices</td></tr>
+<tr><td>systemd-udevd</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>udev Kernel Device Manager</td></tr>
+<tr><td>systemd-update-utmp</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Update UTMP about System Boot/Shutdown</td></tr>
+<tr><td>systemd-user-sessions</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Permit User Sessions</td></tr>
+<tr><td>udisks2</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Disk Manager</td></tr>
+<tr><td>ufw</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Uncomplicated firewall</td></tr>
+<tr><td>unattended-upgrades</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Unattended Upgrades Shutdown</td></tr>
+<tr><td>upower</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Daemon for power management</td></tr>
+<tr><td>user-runtime-dir@1000</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>User Runtime Directory /run/user/1000</td></tr>
+<tr><td>user@1000</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>User Manager for UID 1000</td></tr>
+<tr><td>uuidd</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Daemon for generating UUIDs</td></tr>
+<tr><td>vagrant-vmware-utility</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>Vagrant VMware Utility</td></tr>
+<tr><td>vboxadd-service</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>vboxadd-service.service</td></tr>
+<tr><td>vboxadd</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>vboxadd.service</td></tr>
+<tr><td>virtualbox</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>LSB: VirtualBox Linux kernel module</td></tr>
+<tr><td>vmware-USBArbitrator</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>LSB: This services starts and stops the USB Arbitrator.</td></tr>
+<tr><td>vmware</td><td><span style='background-color:red; color:white; padding: 3px;'> Parado</span></td><td>LSB: This service starts and stops VMware services</td></tr>
+<tr><td>whoopsie</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>crash report submission daemon</td></tr>
+<tr><td>wpa_supplicant</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>WPA supplicant</td></tr>
+<tr><td>xrdp-sesman</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>xrdp session manager</td></tr>
+<tr><td>xrdp</td><td><span style='background-color:green; color:white; padding: 3px;'> Rodando</span></td><td>xrdp daemon</td></tr>
 </table>
 
     </div>
