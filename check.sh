@@ -327,7 +327,7 @@ card_1_body() {
     
     <b><i class='fa fa-network-wired'></i> Rodando em:</b><span style='margin-left:10%;'> $(hostname -I | awk '{print $1}')</span><br>
 
-    <b><i class='fa fa-microchip'></i> CPU:</b><span style='margin-left:10%;'> "$(lscpu | grep 'Nome' | awk -F ':' '{print $2}' | sed 's/^ *//')"</span><br>
+    <b><i class='fa fa-microchip'></i> CPU:</b><span style='margin-left:10%;'> "$(lscpu | grep 'Model name' | awk -F ':' '{print $2}' | sed 's/^ *//')"</span><br>
 
     <b><i class='fa fa-memory'></i> RAM:</b><span style='margin-left:10%;'> $(free -h | grep Mem | awk '{print $2}')</span><br>
 
