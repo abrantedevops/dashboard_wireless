@@ -30,7 +30,7 @@ docker-compose up -d
 
 5. Access the dashboard
 ```bash
-http://(your_ip):8080/check
+http://(ip_server):8080/check
 ```
 
 6. (Optional) Create a cron job to update the index.html file, for example, every 1 minute
